@@ -33,21 +33,25 @@ Thiết kế CSDL đạt chuẩn 3NF để quản lý thời khoá biểu giản
 
 ## 🔍 Truy vấn giảng viên bận
 ```sql 
-DECLARE @datetime1 DATETIME = '2025-04-10 07:00:00';
-DECLARE @datetime2 DATETIME = '2025-04-10 11:00:00';
+DECLARE @datetime1 DATETIME = '2025-04-13 08:00:00';
+DECLARE @datetime2 DATETIME = '2025-04-13 10:00:00';
 
 SELECT 
-    gv.HoTen AS HoTenGiangVien,
-    mh.TenMH AS MonDay,
-    lhp.GioBatDau,
-    lhp.GioKetThuc
+    GV.HoTen,
+    MH.TenMon,
+    TKB.GioVao,
+    TKB.GioRa
 FROM 
-    LopHocPhan lhp
+    ThoiKhoaBieu TKB
 JOIN 
-    GiangVien gv ON lhp.MaGV = gv.MaGV
+    LopHocPhan LHP ON TKB.MaLHP = LHP.MaLHP
 JOIN 
-    MonHoc mh ON lhp.MaMH = mh.MaMH
+    GiangVien GV ON LHP.MaGV = GV.MaGV
+JOIN 
+    MonHoc MH ON LHP.MaMon = MH.MaMon
 WHERE 
-    lhp.GioBatDau <= @datetime2 AND lhp.GioKetThuc >= @datetime1;
+    TKB.NgayHoc = CAST(@datetime1 AS DATE)
+    AND TKB.GioVao < CAST(@datetime2 AS TIME)
+    AND TKB.GioRa > CAST(@datetime1 AS TIME);
 ```
 *Kết quả truy vấn danh sách giảng viên đang giảng dạy trong khoảng thời gian*
